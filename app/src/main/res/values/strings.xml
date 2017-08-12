@@ -19,15 +19,15 @@
 
     <!-- Dummy data -->
 
-    <array name="cat_names">
-        <item>Cat one</item>
-        <item>Cat two</item>
-        <item>Cat three</item>
-        <item>Cat four</item>
-        <item>Cat five</item>
-        <item>Cat six</item>
-        <item>Cat seven</item>
-        <item>Cat eight</item>
+    <array name="user_names">
+        <item>用户1</item>
+        <item>用户2</item>
+        <item>用户3</item>
+        <item>用户4</item>
+        <item>用户5</item>
+        <item>用户6</item>
+        <item>用户7</item>
+        <item>用户8</item>
     </array>
 
     <array name="cat_descriptions">
@@ -41,7 +41,7 @@
         <item>Description eight</item>
     </array>
 
-    <array name="cat_images">
+    <array name="photos">
         <item>https://i.ytimg.com/vi/tntOCGkgt98/maxresdefault.jpg</item>
         <item>https://i.ytimg.com/vi/icqDxNab3Do/maxresdefault.jpg</item>
         <item>http://cdn.hasinstinct.com/2015/08/14/football-wallpapers-funny-cats-smile-wallpaper-31607.jpg</item>
@@ -51,5 +51,7 @@
         <item>https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSYz-mKES0-qiefh_xQV1dApGVM2t0UzlSFPB4C8Xm2msyH8tHe</item>
         <item>http://www.becauseimacat.com/wp-content/uploads/2015/09/Funny-Cat-Vine-Compilation.jpg</item>
     </array>
+
+
 
 </resources>
