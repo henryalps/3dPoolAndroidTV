@@ -16,7 +16,7 @@ kinds of works.
 The licenses for most software and other practical works are designed to take away
 your freedom to share and change the works. By contrast, the GNU General Public
 License is intended to guarantee your freedom to share and change all versions of a
-program--to make sure it remains free software for all its users. We, the Free
+program--to make sure it remains free software for all its userWrappers. We, the Free
 Software Foundation, use the GNU General Public License for most of our software; it
 applies also to any other work released this way by its authors. You can apply it to
 your programs, too.
@@ -42,19 +42,19 @@ copyright on the software, and (2) offer you this License giving you legal permi
 to copy, distribute and/or modify it.
 
 For the developers' and authors' protection, the GPL clearly explains that there is
-no warranty for this free software. For both users' and authors' sake, the GPL
+no warranty for this free software. For both userWrappers' and authors' sake, the GPL
 requires that modified versions be marked as changed, so that their problems will not
 be attributed erroneously to authors of previous versions.
 
-Some devices are designed to deny users access to install or run modified versions of
+Some devices are designed to deny userWrappers access to install or run modified versions of
 the software inside them, although the manufacturer can do so. This is fundamentally
-incompatible with the aim of protecting users' freedom to change the software. The
+incompatible with the aim of protecting userWrappers' freedom to change the software. The
 systematic pattern of such abuse occurs in the area of products for individuals to
 use, which is precisely where it is most unacceptable. Therefore, we have designed
 this version of the GPL to prohibit the practice for those products. If such problems
 arise substantially in other domains, we stand ready to extend this provision to
 those domains in future versions of the GPL, as needed to protect the freedom of
-users.
+userWrappers.
 
 Finally, every program is threatened constantly by software patents. States should
 not allow patents to restrict development and use of software on general-purpose
@@ -135,7 +135,7 @@ the source code for shared libraries and dynamically linked subprograms that the
 is specifically designed to require, such as by intimate data communication or
 control flow between those subprograms and other parts of the work.
 
-The Corresponding Source need not include anything that users can regenerate
+The Corresponding Source need not include anything that userWrappers can regenerate
 automatically from other parts of the Corresponding Source.
 
 The Corresponding Source for a work in source code form is that same work.
@@ -173,7 +173,7 @@ When you convey a covered work, you waive any legal power to forbid circumventio
 technological measures to the extent such circumvention is effected by exercising
 rights under this License with respect to the covered work, and you disclaim any
 intention to limit operation or modification of the work as a means of enforcing,
-against the work's users, your or third parties' legal rights to forbid circumvention
+against the work's userWrappers, your or third parties' legal rights to forbid circumvention
 of technological measures.
 
 ### 4. Conveying Verbatim Copies.
@@ -213,7 +213,7 @@ A compilation of a covered work with other separate and independent works, which
 not by their nature extensions of the covered work, and which are not combined with
 it such as to form a larger program, in or on a volume of a storage or distribution
 medium, is called an &ldquo;aggregate&rdquo; if the compilation and its resulting
-copyright are not used to limit the access or legal rights of the compilation's users
+copyright are not used to limit the access or legal rights of the compilation's userWrappers
 beyond what the individual works permit. Inclusion of a covered work in an aggregate
 does not cause this License to apply to the other parts of the aggregate.
 

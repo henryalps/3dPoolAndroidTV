@@ -1,7 +1,9 @@
 package com.intel.tvpresent.data;
 
 import com.intel.tvpresent.data.local.PreferencesHelper;
+import com.intel.tvpresent.data.model.Room;
 import com.intel.tvpresent.data.remote.AndroidTvService;
+import com.intel.tvpresent.data.remote.JMSHelper;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -14,11 +16,15 @@ public class DataManagerTest {
     @Mock
     AndroidTvService mMockAndroidTvService;
     @Mock PreferencesHelper mMockPreferencesHelper;
+    @Mock
+    JMSHelper mMockJMSHelper;
+    @Mock
+    Room mMockRoom;
     private DataManager mDataManager;
 
     @Before
     public void setUp() {
-        mDataManager = new DataManager(mMockPreferencesHelper, mMockAndroidTvService);
+        mDataManager = new DataManager(mMockPreferencesHelper, mMockAndroidTvService, mMockJMSHelper, mMockRoom);
     }
 
 }

@@ -46,6 +46,7 @@ dependencies {
     final ESPRESSO_VERSION = '2.2.1'
     final RUNNER_VERSION = '0.4'
     final RETROFIT_VERSION = '2.0.0-beta2'
+    final FASTJSON_VERSION = '1.1.63.android'
 
     def daggerCompiler = "com.google.dagger:dagger-compiler:$DAGGER_VERSION"
     def jUnit = "junit:junit:4.12"
@@ -76,6 +77,12 @@ dependencies {
     provided 'org.glassfish:javax.annotation:10.0-b28' //Required by Dagger2
 
     compile 'de.hdodenhof:circleimageview:2.1.0' // image
+    compile 'com.android.support:cardview-v7:23.0.0'
+
+    compile "com.alibaba:fastjson:$FASTJSON_VERSION"
+
+    compile files('libs/org.eclipse.paho.android.service-1.0.2.jar')
+    compile files('libs/org.eclipse.paho.client.mqttv3-1.0.2.jar')
 
     // Instrumentation test dependencies
     androidTestCompile jUnit

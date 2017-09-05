@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.intel.tvpresent.R;
-import com.intel.tvpresent.data.model.User;
+import com.intel.tvpresent.data.model.UserWrapper;
 
 import java.util.List;
 
@@ -23,12 +23,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class ContentRecycleViewAdapter extends RecyclerView.Adapter<ContentRecycleViewAdapter.ViewHolder> {
-    private User[] users;
+    private UserWrapper[] userWrappers;
     private Drawable mDefaultCardImage;
 
-    public ContentRecycleViewAdapter(List<User> users) {
-        User[] converter = new User[users.size()];
-        this.users = users.toArray(converter);
+    public ContentRecycleViewAdapter(List<UserWrapper> userWrappers) {
+        UserWrapper[] converter = new UserWrapper[userWrappers.size()];
+        this.userWrappers = userWrappers.toArray(converter);
     }
 
     @Override
@@ -40,17 +40,17 @@ public class ContentRecycleViewAdapter extends RecyclerView.Adapter<ContentRecyc
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mName.setText(users[position].name);
-        holder.mOrder.setText(String.valueOf(users[position].order));
+        holder.mName.setText(userWrappers[position].getNickName());
+        holder.mOrder.setText(String.valueOf(userWrappers[position].getRank()));
         Glide.with(holder.itemView.getContext())
-                .load(users[position].photoUrl)
+                .load(userWrappers[position].getAvatarUrl())
                 .error(mDefaultCardImage)
                 .into(holder.mPhoto);
     }
 
     @Override
     public int getItemCount() {
-        return users.length;
+        return userWrappers.length;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

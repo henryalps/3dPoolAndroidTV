@@ -1,14 +1,16 @@
 package com.intel.tvpresent.ui.content;
 
+import android.content.Context;
+
 import com.intel.tvpresent.data.DataManager;
-import com.intel.tvpresent.data.model.User;
+import com.intel.tvpresent.data.model.UserWrapper;
 import com.intel.tvpresent.ui.base.BasePresenter;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.SingleSubscriber;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -29,22 +31,27 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> {
         if (mSubscription != null) mSubscription.unsubscribe();
     }
 
-    public void getUsers(List<User> users) {
+    public void getUsers(Context context) {
         checkViewAttached();
 
-        mSubscription = mDataManager.getUsers(users)
+        mSubscription = mDataManager.observableUsers()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new SingleSubscriber<List<User>>() {
+                .subscribe(new Subscriber<List<UserWrapper>>() {
                     @Override
-                    public void onSuccess(List<User> value) {
-                        getMvpView().initListWithUsers(value);
-                        getMvpView().playVideo(value.get(0).videoRecord.url);
+                    public void onCompleted() {
+
                     }
 
                     @Override
-                    public void onError(Throwable error) {
+                    public void onError(Throwable e) {
 
+                    }
+
+                    @Override
+                    public void onNext(List<UserWrapper> userWrappers) {
+                        getMvpView().initListWithUsers(userWrappers);
+                        getMvpView().playVideo(userWrappers.get(0).getPlayRecordWrapper().getVideoUrl());
                     }
                 });
 
