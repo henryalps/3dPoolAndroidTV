@@ -10,6 +10,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import rx.Observable;
+
 @RunWith(MockitoJUnitRunner.class)
 public class DataManagerTest {
 
@@ -17,14 +19,14 @@ public class DataManagerTest {
     AndroidTvService mMockAndroidTvService;
     @Mock PreferencesHelper mMockPreferencesHelper;
     @Mock
-    JMSHelper mMockJMSHelper;
+    Observable<JMSHelper> mMockJmsHelperObservable;
     @Mock
     Room mMockRoom;
     private DataManager mDataManager;
 
     @Before
     public void setUp() {
-        mDataManager = new DataManager(mMockPreferencesHelper, mMockAndroidTvService, mMockJMSHelper, mMockRoom);
+        mDataManager = new DataManager(mMockPreferencesHelper, mMockAndroidTvService, mMockJmsHelperObservable, mMockRoom);
     }
 
 }

@@ -51,14 +51,24 @@ public class JMSHelper {
         client = new MqttAndroidClient(context, uri, clientID);
     }
 
-    public void subscribe(MqttCallback callback) {
+    public void subscribe(final MqttCallback callback) {
         client.setCallback(callback);
         try {
             client.connect(conOpt, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken iMqttToken) {
                     try {
-                        client.subscribe(topic, 0, null, null);
+                        client.subscribe(topic, 0, null, new IMqttActionListener() {
+                            @Override
+                            public void onSuccess(IMqttToken iMqttToken) {
+                                System.out.println();
+                            }
+
+                            @Override
+                            public void onFailure(IMqttToken iMqttToken, Throwable throwable) {
+                                System.out.println();
+                            }
+                        });
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -66,7 +76,7 @@ public class JMSHelper {
 
                 @Override
                 public void onFailure(IMqttToken iMqttToken, Throwable throwable) {
-
+                    System.out.println();
                 }
             });
         } catch (MqttException e) {

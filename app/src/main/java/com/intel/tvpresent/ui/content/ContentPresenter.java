@@ -1,12 +1,14 @@
 package com.intel.tvpresent.ui.content;
 
-import android.content.Context;
+import android.media.MediaPlayer;
 
 import com.intel.tvpresent.data.DataManager;
+import com.intel.tvpresent.data.model.GameLevel;
 import com.intel.tvpresent.data.model.UserWrapper;
 import com.intel.tvpresent.ui.base.BasePresenter;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -15,10 +17,11 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class ContentPresenter extends BasePresenter<ContentMvpView> {
+public class ContentPresenter extends BasePresenter<ContentMvpView> implements MediaPlayer.OnCompletionListener {
 
     private Subscription mSubscription;
     private final DataManager mDataManager;
+    private Map<GameLevel, List<UserWrapper>> userCache = null;
 
     @Inject
     public ContentPresenter(DataManager dataManager) {
@@ -31,13 +34,33 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> {
         if (mSubscription != null) mSubscription.unsubscribe();
     }
 
-    public void getUsers(Context context) {
+    public void getUsers() {
         checkViewAttached();
+        mDataManager.login().observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(new Subscriber<Map<GameLevel, List<UserWrapper>>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(Map<GameLevel, List<UserWrapper>> gameLevelListMap) {
+                Map.Entry<GameLevel, List<UserWrapper>> entry= gameLevelListMap.entrySet().iterator().next();
+                GameLevel gameLevel = entry.getKey();
+                List<UserWrapper> userWrappers = entry.getValue();
+                getMvpView().init(userWrappers, gameLevel);
+                getMvpView().playNext(ContentPresenter.this);
+            }
+        });
 
         mSubscription = mDataManager.observableUsers()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<List<UserWrapper>>() {
+                .subscribe(new Subscriber<Map<GameLevel, List<UserWrapper>>>() {
                     @Override
                     public void onCompleted() {
 
@@ -49,12 +72,21 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> {
                     }
 
                     @Override
-                    public void onNext(List<UserWrapper> userWrappers) {
-                        getMvpView().initListWithUsers(userWrappers);
-                        getMvpView().playVideo(userWrappers.get(0).getPlayRecordWrapper().getVideoUrl());
+                    public void onNext(Map<GameLevel, List<UserWrapper>> levelUsers) {
+                        userCache = levelUsers;
                     }
                 });
-
     }
 
+    @Override
+    public void onCompletion(MediaPlayer mediaPlayer) {
+        if (userCache != null) {
+            Map.Entry<GameLevel, List<UserWrapper>> entry= userCache.entrySet().iterator().next();
+            GameLevel gameLevel = entry.getKey();
+            List<UserWrapper> userWrappers = entry.getValue();
+            getMvpView().init(userWrappers, gameLevel);
+            userCache = null;
+        }
+        getMvpView().playNext(this);
+    }
 }
