@@ -1,5 +1,6 @@
 package com.intel.tvpresent.ui.content;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.hanks.htextview.line.LineTextView;
 import com.intel.tvpresent.R;
 import com.intel.tvpresent.data.model.GameLevel;
 import com.intel.tvpresent.data.model.UserWrapper;
@@ -18,6 +20,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
+import fr.arnaudguyon.smartfontslib.FontTextView;
 
 /**
  * Created by henryalps on 2017/7/31.
@@ -38,10 +41,10 @@ public class ContentRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (TYPE_HEADER == viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_header,parent,false);
-            return new ViewHolder(view);
+            return new Header(view);
         } else {
             mDefaultCardImage = ContextCompat.getDrawable(parent.getContext(), R.drawable.default_avatar);
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_user,parent,false);
@@ -53,16 +56,27 @@ public class ContentRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof ViewHolder) {
             ViewHolder holder = (ViewHolder) viewHolder;
-            holder.mName.setText(userWrappers[position].getNickName());
-            holder.mOrder.setText(String.valueOf(userWrappers[position].getRank()));
+            holder.mName.setText(userWrappers[position - 1].getNickName());
+            holder.mOrder.setText(String.format("第%s名", String.valueOf(userWrappers[position - 1].getRank())));
+            holder.mScore.setText(String.valueOf(userWrappers[position - 1].getPlayRecordWrapper().getScore()));
             Glide.with(holder.itemView.getContext())
-                    .load(userWrappers[position].getAvatarUrl())
+                    .load(userWrappers[position - 1].getAvatarUrl())
                     .error(mDefaultCardImage)
                     .into(holder.mPhoto);
             holder.mBackground.setSelected(mSelectdPos == position);
+            if (mSelectdPos == position) {
+                holder.mBackground.callOnClick();
+                holder.mName.setTextColor(Color.BLACK);
+                holder.mOrder.setTextColor(Color.BLACK);
+                holder.mScore.setTextColor(Color.YELLOW);
+            } else {
+                holder.mName.setTextColor(Color.WHITE);
+                holder.mOrder.setTextColor(Color.WHITE);
+                holder.mScore.setTextColor(Color.WHITE);
+            }
         } else {
             Header holder = (Header) viewHolder;
-            holder.title.setText(gameLevel.getDesp());
+            holder.title.animateText(gameLevel.getName());
         }
     }
 
@@ -89,7 +103,7 @@ public class ContentRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     public void setmSelectdPos(int mSelectdPos) {
-        this.mSelectdPos = mSelectdPos;
+        this.mSelectdPos = mSelectdPos + 1;
         notifyDataSetChanged();
     }
 
@@ -110,6 +124,9 @@ public class ContentRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         @Bind(R.id.background)
         View mBackground;
 
+        @Bind(R.id.score)
+        FontTextView mScore;
+
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -118,7 +135,7 @@ public class ContentRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     public static class Header extends RecyclerView.ViewHolder {
         @Bind(R.id.title)
-        TextView title;
+        LineTextView title;
 
         public Header(View itemView) {
             super(itemView);

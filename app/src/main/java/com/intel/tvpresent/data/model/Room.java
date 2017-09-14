@@ -20,7 +20,8 @@ import javax.inject.Singleton;
 
 @Singleton
 public class Room {
-    private String rawJson = "";
+    private String rawJson = " ";
+    private String notice = " ";
     private Map<GameLevel, List<UserWrapper>> userWrapperList;
 
     public String getRawJson() {
@@ -31,13 +32,31 @@ public class Room {
     public Room() {
     }
 
-    public boolean update(String rawJson) {
-        if (!getRawJson().equals(rawJson)) {
-            this.rawJson = rawJson;
-            setUserWrapperList(parseRawJson(rawJson));
-            return true;
+    public boolean updateInPush(String rawJson) {
+        try {
+            if (!getRawJson().equals(rawJson)) {
+                this.rawJson = rawJson;
+                setUserWrapperList(parseRawJson(rawJson));
+                return true;
+            }
+            return false;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
         }
-        return false;
+    }
+
+    public boolean updateInLogin(String rawJson) {
+        try {
+            JSONObject jsonObject = JSON.parseObject(rawJson).getJSONObject("data");
+            this.rawJson = jsonObject.getString("ranklist");
+            NoticeWrapper notice = new NoticeWrapper(jsonObject.getJSONObject("notice"));
+            this.notice = String.format("【%s】%s", notice.getTitle(), notice.getContent());
+            setUserWrapperList(parseRawJson(this.rawJson));
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     public Map<GameLevel, List<UserWrapper>> getUserWrapperList() {
@@ -52,14 +71,12 @@ public class Room {
         Map<GameLevel, List<UserWrapper>> res = new HashMap<>();
         ArrayList<GameLevel> levels = new ArrayList<>();
         try {
-            JSONObject room = JSON.parseObject(json).getJSONObject("data");
+            JSONObject room = JSON.parseObject(json);
             JSONArray levelJson = room.getJSONArray("levelList");
             for (int i=0; i<levelJson.size(); i++) {
                 GameLevel gameLevel = new GameLevel();
                 gameLevel.setId(levelJson.getJSONObject(i).getString("id"));
-                gameLevel.setId(levelJson.getJSONObject(i).getString("name"));
-                gameLevel.setDesp(levelJson.getJSONObject(i).getString("description") + "\n风云榜");
-                gameLevel.setOrder(levelJson.getJSONObject(i).getInteger("displayOrder"));
+                gameLevel.setName(levelJson.getJSONObject(i).getString("name") + "\n风云榜");
                 gameLevel.setThumb(levelJson.getJSONObject(i).getString("thumbnailUrl"));
                 levels.add(gameLevel);
             }
@@ -86,5 +103,9 @@ public class Room {
             ex.printStackTrace();
         }
         return res;
+    }
+
+    public String getNotice() {
+        return notice;
     }
 }

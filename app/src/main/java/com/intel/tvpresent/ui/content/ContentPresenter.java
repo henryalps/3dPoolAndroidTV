@@ -1,11 +1,14 @@
 package com.intel.tvpresent.ui.content;
 
-import android.media.MediaPlayer;
+import android.os.Handler;
 
 import com.intel.tvpresent.data.DataManager;
 import com.intel.tvpresent.data.model.GameLevel;
+import com.intel.tvpresent.data.model.Room;
 import com.intel.tvpresent.data.model.UserWrapper;
 import com.intel.tvpresent.ui.base.BasePresenter;
+
+import org.videolan.vlc.listener.MediaListenerEvent;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +20,7 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class ContentPresenter extends BasePresenter<ContentMvpView> implements MediaPlayer.OnCompletionListener {
+public class ContentPresenter extends BasePresenter<ContentMvpView> implements MediaListenerEvent {
 
     private Subscription mSubscription;
     private final DataManager mDataManager;
@@ -36,7 +39,7 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> implements M
 
     public void getUsers() {
         checkViewAttached();
-        mDataManager.login().observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(new Subscriber<Map<GameLevel, List<UserWrapper>>>() {
+        mDataManager.login().observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(new Subscriber<Room>() {
             @Override
             public void onCompleted() {
 
@@ -48,12 +51,17 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> implements M
             }
 
             @Override
-            public void onNext(Map<GameLevel, List<UserWrapper>> gameLevelListMap) {
-                Map.Entry<GameLevel, List<UserWrapper>> entry= gameLevelListMap.entrySet().iterator().next();
-                GameLevel gameLevel = entry.getKey();
-                List<UserWrapper> userWrappers = entry.getValue();
-                getMvpView().init(userWrappers, gameLevel);
-                getMvpView().playNext(ContentPresenter.this);
+            public void onNext(Room room) {
+                for (Map.Entry<GameLevel, List<UserWrapper>> entry : room.getUserWrapperList().entrySet()) {
+                    if (entry.getKey().getId().equals("1")) {
+                        GameLevel gameLevel = entry.getKey();
+                        List<UserWrapper> userWrappers = entry.getValue();
+                        getMvpView().init(userWrappers, gameLevel);
+                        getMvpView().playNext(ContentPresenter.this);
+//                        getMvpView().playNext();
+                        getMvpView().setNotice(room.getNotice());
+                    }
+                }
             }
         });
 
@@ -79,8 +87,18 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> implements M
     }
 
     @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {
-        if (userCache != null) {
+    public void eventBuffing(float buffing, boolean show) {
+
+    }
+
+    @Override
+    public void eventPlayInit(boolean openClose) {
+        System.out.println();
+    }
+
+    @Override
+    public void eventStop(boolean isPlayError) {
+        if (userCache != null && userCache.size() > 0) {
             Map.Entry<GameLevel, List<UserWrapper>> entry= userCache.entrySet().iterator().next();
             GameLevel gameLevel = entry.getKey();
             List<UserWrapper> userWrappers = entry.getValue();
@@ -88,5 +106,20 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> implements M
             userCache = null;
         }
         getMvpView().playNext(this);
+    }
+
+    @Override
+    public void eventError(int error, boolean show) {
+
+    }
+
+    @Override
+    public void eventPlay(boolean isPlaying) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                eventStop(false);
+            }
+        }, getMvpView().getDuration());
     }
 }

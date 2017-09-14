@@ -1,7 +1,5 @@
 package com.intel.tvpresent.data;
 
-import android.util.Log;
-
 import com.intel.tvpresent.data.local.PreferencesHelper;
 import com.intel.tvpresent.data.model.GameLevel;
 import com.intel.tvpresent.data.model.Room;
@@ -15,6 +13,7 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -72,24 +71,29 @@ public class DataManager {
         return mPreferencesHelper;
     }
 
-    public rx.Observable<Map<GameLevel, List<UserWrapper>>> login() {
+    public rx.Observable<Room> login() {
 
-        return rx.Observable.create(new rx.Observable.OnSubscribe<Map<GameLevel, List<UserWrapper>>>() {
+        return rx.Observable.create(new rx.Observable.OnSubscribe<Room>() {
             @Override
-            public void call(final Subscriber<? super Map<GameLevel, List<UserWrapper>>> subscriber) {
+            public void call(final Subscriber<? super Room> subscriber) {
                 PickyHttpImpl pickyHttp = retrofit.create(PickyHttpImpl.class);
                 pickyHttp.login("010100a").enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Response<ResponseBody> response, Retrofit retrofit) {
-                        Log.d("RETROFIT", "message = " + response.message());
-                        if (mRoom.update((response.message()))) {
-                            subscriber.onNext(mRoom.getUserWrapperList());
+                        try {
+                            String body = response.body().string();
+                            if (mRoom.updateInLogin(body)) {
+                                subscriber.onNext(mRoom);
+                            }
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
                         }
                     }
 
                     @Override
                     public void onFailure(Throwable t) {
-
+                        System.out.println();
+                        t.printStackTrace();
                     }
                 });
             }
@@ -111,7 +115,7 @@ public class DataManager {
 
                     @Override
                     public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-                        if (mRoom.update(new String(mqttMessage.getPayload()))) {
+                        if (mRoom.updateInPush(new String(mqttMessage.getPayload()))) {
                             subscriber.onNext(mRoom.getUserWrapperList());
                         }
                     }

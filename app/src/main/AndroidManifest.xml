@@ -33,12 +33,10 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
 
             </intent-filter>
         </activity>
-
-        <activity android:name="com.intel.tvpresent.ui.search.SearchContentActivity"/>
 
         <receiver
             android:name="com.intel.tvpresent.data.recommendations.RecommendationReceiver"

@@ -5,7 +5,6 @@ package com.intel.tvpresent.data.model;
  */
 
 public class GameLevel {
-    private String desp;
 
     private String name;
 
@@ -16,13 +15,6 @@ public class GameLevel {
     private int order;
 
     public GameLevel(){}
-
-    public String getDesp() {
-        return desp;
-    }
-    public void setDesp(String desp) {
-        this.desp = desp;
-    }
 
     public String getName() {
         return name;

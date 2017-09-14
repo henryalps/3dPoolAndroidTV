@@ -52,6 +52,6 @@
         <item>http://www.becauseimacat.com/wp-content/uploads/2015/09/Funny-Cat-Vine-Compilation.jpg</item>
     </array>
 
-
+    <string translatable="false" name="fontScore">score-font.ttf</string>
 
 </resources>

@@ -18,34 +18,50 @@ public class PlayRecordWrapper {
     }
 
     public String getLuckyBall() {
-        return playRecorder.getString("luckyBallCount");
+        try{
+            return playRecorder.getString("luckyBallCount");
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     public String getStarBag() {
-        return playRecorder.getString("starBagCount");
+        try {
+            return playRecorder.getString("starBagCount");
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     public String getMaxCombo() {
-        JSONObject combo = playRecorder.getJSONObject("combo");
-        String maxCombo = "0";
-        for (int i = 0; i < 20; i++) {
-            try {
-                combo.get(String.valueOf(i));
-                maxCombo = String.valueOf(i);
-            } catch (Exception ex){}
+        try{
+            JSONObject combo = playRecorder.getJSONObject("combo");
+            String maxCombo = "0";
+            for (int i = 0; i < 20; i++) {
+                try {
+                    combo.get(String.valueOf(i));
+                    maxCombo = String.valueOf(i);
+                } catch (Exception ex){}
+            }
+            return maxCombo;
+        } catch (Exception ex) {
+            return null;
         }
-        return maxCombo;
     }
 
     public String getMaxMultiPot() {
-        JSONObject combo = playRecorder.getJSONObject("multiPot");
-        String maxCombo = "0";
-        for (int i = 0; i < 20; i++) {
-            try {
-                combo.get(String.valueOf(i));
-                maxCombo = String.valueOf(i);
-            } catch (Exception ex){}
+        try {
+            JSONObject combo = playRecorder.getJSONObject("multiPot");
+            String maxCombo = "0";
+            for (int i = 0; i < 20; i++) {
+                try {
+                    combo.get(String.valueOf(i));
+                    maxCombo = String.valueOf(i);
+                } catch (Exception ex){}
+            }
+            return maxCombo;
+        } catch (Exception ex) {
+            return null;
         }
-        return maxCombo;
     }
 }

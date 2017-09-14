@@ -1,19 +1,29 @@
 package com.intel.tvpresent.ui.content;
 
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.TextView;
-import android.widget.VideoView;
 
+import com.daimajia.numberprogressbar.NumberProgressBar;
+import com.hanks.htextview.line.LineTextView;
 import com.intel.tvpresent.R;
 import com.intel.tvpresent.data.model.GameLevel;
 import com.intel.tvpresent.data.model.PlayRecordWrapper;
 import com.intel.tvpresent.data.model.UserWrapper;
 import com.intel.tvpresent.ui.base.BaseActivity;
+import com.intel.tvpresent.ui.custom.FocusedTrue4TV;
+import com.liulishuo.filedownloader.BaseDownloadTask;
+import com.liulishuo.filedownloader.FileDownloadListener;
+import com.liulishuo.filedownloader.FileDownloader;
+import com.wenming.library.LogReport;
 
+import org.videolan.vlc.VlcVideoView;
+import org.videolan.vlc.listener.MediaListenerEvent;
+
+import java.io.File;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -21,13 +31,15 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+//import org.videolan.vlc.listener.MediaListenerEvent;
+
 public class ContentActivity extends BaseActivity implements ContentMvpView {
 
     @Bind(R.id.user_list)
     RecyclerView mRecyclerView;
 
     @Bind(R.id.user_record_video)
-    VideoView mVideoView;
+    VlcVideoView mVideoView; //VlcVideoView
 
     @Bind(R.id.score)
     TextView mScore;
@@ -44,10 +56,23 @@ public class ContentActivity extends BaseActivity implements ContentMvpView {
     @Bind(R.id.max_combo)
     TextView mMaxCombo;
 
+    @Bind(R.id.notice)
+    FocusedTrue4TV mNotice;
+
+    @Bind(R.id.number_progress_bar)
+    NumberProgressBar numberProgressBar;
+
+    @Bind(R.id.real_header)
+    View headerView;
+
     @Inject
     ContentPresenter mContentPresenter;
 
     private ContentRecycleViewAdapter mAdapter;
+
+//    private CarouselLayoutManager layoutManager;
+
+    private LinearLayoutManager layoutManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,8 +81,13 @@ public class ContentActivity extends BaseActivity implements ContentMvpView {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        layoutManager = new CarouselLayoutManager(CarouselLayoutManager.VERTICAL);
+//        layoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
+        layoutManager = new LinearLayoutManager(this);
+
+        mRecyclerView.setLayoutManager(layoutManager); // new LinearLayoutManager(this)
         mContentPresenter.attachView(this);
+        LogReport.getInstance().upload(this);
     }
 
     @Override
@@ -66,13 +96,14 @@ public class ContentActivity extends BaseActivity implements ContentMvpView {
         startFetchUser();
     }
 
-    // subscribe user record list & update display
+    // subscribe user record list & updateInPush display
     private void startFetchUser() {
         mContentPresenter.getUsers();
     }
 
     @Override
     public void init(List<UserWrapper> userWrappers, GameLevel gameLevel) {
+        ((LineTextView)(headerView.findViewById(R.id.title))).setText(gameLevel.getName());
         if (null == mAdapter) {
             mAdapter = new ContentRecycleViewAdapter(gameLevel, userWrappers);
         } else {
@@ -84,31 +115,120 @@ public class ContentActivity extends BaseActivity implements ContentMvpView {
     }
 
     @Override
-    public void playNext(MediaPlayer.OnCompletionListener onCompletionListener) {
-        mVideoView.setOnCompletionListener(onCompletionListener);
-        if (mVideoView.getDuration() > 0) { // initialized
-            if (mAdapter.getmSelectdPos() >= mAdapter.getItemCount() - 1) {
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void playNext(final MediaListenerEvent mediaListenerEvent) {
+        ((LineTextView)(headerView.findViewById(R.id.title))).animateText(((LineTextView)(headerView.findViewById(R.id.title))).getText());
+        if (mVideoView.getVisibility() == View.VISIBLE) { // initialized
+            if (mAdapter.getmSelectdPos() >= mAdapter.getItemCount() - 2) {
                 mAdapter.setmSelectdPos(0);
             } else {
                 mAdapter.setmSelectdPos(mAdapter.getmSelectdPos() + 1);
+                layoutManager.scrollToPositionWithOffset(mAdapter.getmSelectdPos() - 1, 80);
             }
+        } else {
+            mVideoView.setVisibility(View.VISIBLE);
         }
+        mVideoView.setMediaListenerEvent(mediaListenerEvent);
+
         PlayRecordWrapper wrapper = mAdapter.getSelectedUserWrapper().getPlayRecordWrapper();
-        mVideoView.setVideoURI(Uri.parse(wrapper.getVideoUrl())); // "android.resource://" + getPackageName() + "/" + R.raw.local_video
+
         setRecordParams(wrapper);
-        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mp.start();
-            }
-        });
+
+        String url = wrapper.getVideoUrl();
+
+        if (url.endsWith(".avi") || url.endsWith(".mp4")) {
+            String[] fileNames = url.split("//");
+            String fileName = fileNames[fileNames.length - 1];
+            FileDownloader.getImpl().create(url)
+                    .setPath(this.getExternalCacheDir().getAbsolutePath() + File.separator + fileName)
+                    .setListener(new FileDownloadListener() {
+                        @Override
+                        protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                            numberProgressBar.setVisibility(View.VISIBLE);
+                            numberProgressBar.setMax(totalBytes);
+                        }
+
+                        @Override
+                        protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                            System.out.println(soFarBytes + " " + totalBytes);
+                            numberProgressBar.setProgress(soFarBytes);
+                        }
+
+                        @Override
+                        protected void completed(BaseDownloadTask task) {
+                            numberProgressBar.setVisibility(View.GONE);
+                            mVideoView.startPlay(task.getPath());
+                            final Handler handler = new Handler();
+//                        mVideoView.setVideoURI(Uri.parse(task.getPath())); // "android.resource://" + getPackageName() + "/" + R.raw.local_video
+//
+//                        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//                            @Override
+//                            public void onPrepared(MediaPlayer mp) {
+//                                mp.start();
+//                            }
+//                        });
+                            // org.videolan.vlc.VlcVideoView
+                        }
+
+                        @Override
+                        protected void paused(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                            System.out.println();
+
+                        }
+
+                        @Override
+                        protected void error(BaseDownloadTask task, Throwable e) {
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        protected void warn(BaseDownloadTask task) {
+                            System.out.println();
+
+                        }
+                    })
+                    .start();
+        } else {
+            mediaListenerEvent.eventStop(false);
+        }
+
+
     }
+
+
 
     public void setRecordParams(PlayRecordWrapper wrapper) {
         mScore.setText(String.format("分数:%s", wrapper.getScore()));
-        mLuckyBall.setText(String.format("幸运球:%s", wrapper.getLuckyBall()));
-        mMultiPot.setText(String.format("MULTIPOT:%s", wrapper.getMaxMultiPot()));
-        mStar.setText(String.format("星级:%s", wrapper.getStarBag()));
-        mMaxCombo.setText(String.format("最大连击:%s", wrapper.getMaxCombo()));
+        setText(mLuckyBall, "幸运球:%s", wrapper.getLuckyBall());
+        setText(mMultiPot, "MULTIPOT:%s", wrapper.getMaxMultiPot());
+        setText(mStar, "星级:%s", wrapper.getStarBag());
+        setText(mMaxCombo, "最大连击:%s", wrapper.getMaxCombo());
+    }
+
+    private void setText(TextView textView, String formatter, String text) {
+        if (!"0".equals(text) && !"null".equals(text) && null != text) {
+            textView.setText(String.format(formatter, text));
+            textView.setVisibility(View.VISIBLE);
+        } else {
+            textView.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void setNotice(String text) {
+        mNotice.setText(text);
+        mNotice.setMarqueeEnable(true);
+    }
+
+    @Override
+    public long getDuration() {
+        if (null != mVideoView) {
+            return mVideoView.getDuration();
+        }
+        return 0L;
     }
 }

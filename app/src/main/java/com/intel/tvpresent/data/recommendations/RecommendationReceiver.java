@@ -19,7 +19,7 @@ public class RecommendationReceiver extends BroadcastReceiver {
     }
 
     private void scheduleRecommendationUpdate(Context context) {
-        Timber.i("Scheduling recommendations update...");
+        Timber.i("Scheduling recommendations updateInPush...");
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent recommendationIntent = new Intent(context, UpdateRecommendationsService.class);
