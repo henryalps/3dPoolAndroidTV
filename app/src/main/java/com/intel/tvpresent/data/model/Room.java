@@ -33,6 +33,7 @@ public class Room {
     }
 
     public boolean updateInPush(String rawJson) {
+        System.out.println(String.format("RAWJSON:PUSH:%s", rawJson));
         try {
             if (!getRawJson().equals(rawJson)) {
                 this.rawJson = rawJson;
@@ -47,6 +48,7 @@ public class Room {
     }
 
     public boolean updateInLogin(String rawJson) {
+        System.out.println(String.format("RAWJSON:LOGIN:%s", rawJson));
         try {
             JSONObject jsonObject = JSON.parseObject(rawJson).getJSONObject("data");
             this.rawJson = jsonObject.getString("ranklist");

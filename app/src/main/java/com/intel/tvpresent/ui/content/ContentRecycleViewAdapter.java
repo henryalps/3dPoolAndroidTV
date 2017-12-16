@@ -32,7 +32,7 @@ public class ContentRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     private Drawable mDefaultCardImage;
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
-    private int mSelectdPos = 1;
+    private int mSelectdPos = 0;
 
     public ContentRecycleViewAdapter(GameLevel gameLevel, List<UserWrapper> userWrappers) {
         UserWrapper[] converter = new UserWrapper[userWrappers.size()];
@@ -103,12 +103,12 @@ public class ContentRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     public void setmSelectdPos(int mSelectdPos) {
-        this.mSelectdPos = mSelectdPos + 1;
+        this.mSelectdPos = mSelectdPos;
         notifyDataSetChanged();
     }
 
     public UserWrapper getSelectedUserWrapper() {
-        return userWrappers[mSelectdPos];
+        return userWrappers[mSelectdPos - 1];
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

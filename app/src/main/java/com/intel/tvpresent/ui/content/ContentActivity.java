@@ -121,13 +121,12 @@ public class ContentActivity extends BaseActivity implements ContentMvpView {
 
     @Override
     public void playNext(final MediaListenerEvent mediaListenerEvent) {
-        ((LineTextView)(headerView.findViewById(R.id.title))).animateText(((LineTextView)(headerView.findViewById(R.id.title))).getText());
         if (mVideoView.getVisibility() == View.VISIBLE) { // initialized
             if (mAdapter.getmSelectdPos() >= mAdapter.getItemCount() - 2) {
-                mAdapter.setmSelectdPos(0);
+                mAdapter.setmSelectdPos(1);
             } else {
                 mAdapter.setmSelectdPos(mAdapter.getmSelectdPos() + 1);
-                layoutManager.scrollToPositionWithOffset(mAdapter.getmSelectdPos() - 1, 80);
+                layoutManager.scrollToPositionWithOffset(mAdapter.getmSelectdPos(), 80);
             }
         } else {
             mVideoView.setVisibility(View.VISIBLE);

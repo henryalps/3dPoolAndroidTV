@@ -10,8 +10,11 @@ import com.intel.tvpresent.ui.base.BasePresenter;
 
 import org.videolan.vlc.listener.MediaListenerEvent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -52,8 +55,10 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> implements M
 
             @Override
             public void onNext(Room room) {
+                ArrayList<String> array = (ArrayList<String>) Arrays.asList("1", "2");
+                int curValue = new Random().nextInt(2);
                 for (Map.Entry<GameLevel, List<UserWrapper>> entry : room.getUserWrapperList().entrySet()) {
-                    if (entry.getKey().getId().equals("1")) {
+                    if (entry.getKey().getId().equals(array.get(curValue))) {
                         GameLevel gameLevel = entry.getKey();
                         List<UserWrapper> userWrappers = entry.getValue();
                         getMvpView().init(userWrappers, gameLevel);

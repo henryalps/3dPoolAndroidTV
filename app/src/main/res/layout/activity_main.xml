@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frame_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -30,24 +31,45 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="@+id/user_record_video"
             app:layout_constraintLeft_toLeftOf="@+id/user_record_video"
+            app:layout_constraintRight_toRightOf="@+id/user_record_video"
             app:layout_constraintTop_toBottomOf="@+id/notice"
             app:layout_constraintVertical_bias="0.498" />
 
         <org.videolan.vlc.VlcVideoView
             android:id="@+id/user_record_video"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/right_bar"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/notice" />
+
+        <RelativeLayout
+            android:id="@+id/right_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/notice"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="@+id/textView">
+
+            <TextView
+                android:id="@+id/rules"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:text="@string/rules" />
+
+        </RelativeLayout>
+
 
         <com.intel.tvpresent.ui.custom.FocusedTrue4TV
             android:id="@+id/notice"
             android:textColor="@color/black"
             android:textSize="24sp"
             android:background="@color/Orange"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -131,31 +153,32 @@
             android:layout_height="wrap_content"
             android:textSize="24sp"
             android:textColor="@color/holo_orange_dark"
-            android:text="↑欢迎扫码关注↑"
+            android:text="↑欢迎扫码开始游戏↑"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             android:layout_marginBottom="8dp"
             android:id="@+id/textView"
             android:layout_marginRight="8dp"
-            app:layout_constraintRight_toRightOf="@+id/barcode"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            app:layout_constraintLeft_toLeftOf="@+id/barcode_2" />
+            android:layout_marginEnd="8dp" />
         <ImageView
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:id="@+id/barcode"
-            android:src="@drawable/barcode"
-            android:layout_marginRight="16dp"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/textView"
-            android:layout_marginEnd="16dp" />
-        <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:id="@+id/barcode_2"
             android:src="@drawable/barcode_2"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/textView"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="@+id/textView"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="@+id/textView"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/barcode_2"
+            android:src="@drawable/barcode"
+            android:visibility="gone"
             app:layout_constraintTop_toTopOf="@+id/barcode"
             app:layout_constraintRight_toLeftOf="@+id/barcode" />
 
