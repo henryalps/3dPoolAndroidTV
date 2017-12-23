@@ -21,7 +21,9 @@ import javax.inject.Singleton;
 @Singleton
 public class Room {
     private String rawJson = " ";
+    private String notification = " ";
     private String notice = " ";
+    private String gameStatement = " ";
     private Map<GameLevel, List<UserWrapper>> userWrapperList;
 
     public String getRawJson() {
@@ -47,13 +49,21 @@ public class Room {
         }
     }
 
+    private String jsonToStr(JSONObject jsonObject) {
+        NoticeWrapper notice = new NoticeWrapper(jsonObject);
+        return String.format("【%s】\n\t %s", notice.getTitle(), notice.getContent());
+    }
+
     public boolean updateInLogin(String rawJson) {
         System.out.println(String.format("RAWJSON:LOGIN:%s", rawJson));
         try {
             JSONObject jsonObject = JSON.parseObject(rawJson).getJSONObject("data");
             this.rawJson = jsonObject.getString("ranklist");
-            NoticeWrapper notice = new NoticeWrapper(jsonObject.getJSONObject("notice"));
-            this.notice = String.format("【%s】%s", notice.getTitle(), notice.getContent());
+            this.notice =  jsonToStr(jsonObject.getJSONObject("notice"));
+            this.gameStatement = jsonToStr(jsonObject.getJSONObject("gameStatement"));
+//            NoticeWrapper notice = new NoticeWrapper(jsonObject.getJSONObject("notification"));
+//            this.notification = String.format("【%s】%s", notice.getTitle(), notice.getContent());
+            this.notification = jsonToStr(jsonObject.getJSONObject("notification"));
             setUserWrapperList(parseRawJson(this.rawJson));
             return true;
         } catch (Exception ex) {
@@ -107,7 +117,23 @@ public class Room {
         return res;
     }
 
+    public String getNotification() {
+        return notification;
+    }
+
     public String getNotice() {
         return notice;
+    }
+
+    public void setNotice(String notice) {
+        this.notice = notice;
+    }
+
+    public String getGameStatement() {
+        return gameStatement;
+    }
+
+    public void setGameStatement(String gameStatement) {
+        this.gameStatement = gameStatement;
     }
 }

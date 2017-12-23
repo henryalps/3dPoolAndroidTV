@@ -13,6 +13,6 @@ import retrofit.http.POST;
 
 public interface PickyHttpImpl {
     @FormUrlEncoded
-    @POST("arpooltest/monitor/login")
+    @POST("arpoolcharge/monitor/login")
     Call<ResponseBody> login(@Field("serialNum") String serialNum);
 }

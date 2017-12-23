@@ -65,6 +65,12 @@ public class ContentActivity extends BaseActivity implements ContentMvpView {
     @Bind(R.id.real_header)
     View headerView;
 
+    @Bind(R.id.rules)
+    TextView mRules;
+
+    @Bind(R.id.broadcast)
+    TextView mBroadcast;
+
     @Inject
     ContentPresenter mContentPresenter;
 
@@ -121,12 +127,14 @@ public class ContentActivity extends BaseActivity implements ContentMvpView {
 
     @Override
     public void playNext(final MediaListenerEvent mediaListenerEvent) {
+        mVideoView.setMinimumHeight(mVideoView.getWidth() * 9 / 16);
         if (mVideoView.getVisibility() == View.VISIBLE) { // initialized
+            mVideoView.pause();
             if (mAdapter.getmSelectdPos() >= mAdapter.getItemCount() - 2) {
                 mAdapter.setmSelectdPos(1);
             } else {
                 mAdapter.setmSelectdPos(mAdapter.getmSelectdPos() + 1);
-                layoutManager.scrollToPositionWithOffset(mAdapter.getmSelectdPos(), 80);
+//                layoutManager.scrollToPositionWithOffset(mAdapter.getmSelectdPos(), 40);
             }
         } else {
             mVideoView.setVisibility(View.VISIBLE);
@@ -182,6 +190,7 @@ public class ContentActivity extends BaseActivity implements ContentMvpView {
                         @Override
                         protected void error(BaseDownloadTask task, Throwable e) {
                             e.printStackTrace();
+                            mediaListenerEvent.eventStop(false);
                         }
 
                         @Override
@@ -218,9 +227,19 @@ public class ContentActivity extends BaseActivity implements ContentMvpView {
     }
 
     @Override
-    public void setNotice(String text) {
+    public void setNotification(String text) {
         mNotice.setText(text);
         mNotice.setMarqueeEnable(true);
+    }
+
+    @Override
+    public void setNotice(String text) {
+        mBroadcast.setText(text);
+    }
+
+    @Override
+    public void setGameStatement(String text) {
+        mRules.setText(text.isEmpty() ? getString(R.string.rules) : text);
     }
 
     @Override

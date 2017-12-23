@@ -12,6 +12,8 @@ public interface ContentMvpView extends MvpView {
     void init(List<UserWrapper> userWrappers, GameLevel gameLevel);
     void playNext(MediaListenerEvent mediaListenerEvent);
 //    void playNext();
+    void setNotification(String text);
     void setNotice(String text);
+    void setGameStatement(String text);
     long getDuration();
 }

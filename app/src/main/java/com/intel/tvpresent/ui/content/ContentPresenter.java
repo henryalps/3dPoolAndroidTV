@@ -1,7 +1,5 @@
 package com.intel.tvpresent.ui.content;
 
-import android.os.Handler;
-
 import com.intel.tvpresent.data.DataManager;
 import com.intel.tvpresent.data.model.GameLevel;
 import com.intel.tvpresent.data.model.Room;
@@ -10,11 +8,8 @@ import com.intel.tvpresent.ui.base.BasePresenter;
 
 import org.videolan.vlc.listener.MediaListenerEvent;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -28,6 +23,7 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> implements M
     private Subscription mSubscription;
     private final DataManager mDataManager;
     private Map<GameLevel, List<UserWrapper>> userCache = null;
+    private boolean handlerMarker = false;
 
     @Inject
     public ContentPresenter(DataManager dataManager) {
@@ -55,16 +51,21 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> implements M
 
             @Override
             public void onNext(Room room) {
-                ArrayList<String> array = (ArrayList<String>) Arrays.asList("1", "2");
-                int curValue = new Random().nextInt(2);
                 for (Map.Entry<GameLevel, List<UserWrapper>> entry : room.getUserWrapperList().entrySet()) {
-                    if (entry.getKey().getId().equals(array.get(curValue))) {
+                    if (entry.getKey().getId().equals("1")) {
                         GameLevel gameLevel = entry.getKey();
+                        if (entry.getValue().size() > 10) {
+                            for (int i = 10; i < entry.getValue().size(); i++) {
+                                entry.getValue().remove(i);
+                            }
+                        }
                         List<UserWrapper> userWrappers = entry.getValue();
                         getMvpView().init(userWrappers, gameLevel);
                         getMvpView().playNext(ContentPresenter.this);
 //                        getMvpView().playNext();
+                        getMvpView().setNotification(room.getNotification());
                         getMvpView().setNotice(room.getNotice());
+                        getMvpView().setGameStatement(room.getGameStatement());
                     }
                 }
             }
@@ -93,12 +94,13 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> implements M
 
     @Override
     public void eventBuffing(float buffing, boolean show) {
-
+        System.out.println();
     }
 
     @Override
     public void eventPlayInit(boolean openClose) {
         System.out.println();
+        handlerMarker=false;
     }
 
     @Override
@@ -120,11 +122,13 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> implements M
 
     @Override
     public void eventPlay(boolean isPlaying) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                eventStop(false);
-            }
-        }, getMvpView().getDuration());
+        if (handlerMarker) {
+            handlerMarker=false;
+            eventStop(false);
+        } else {
+            handlerMarker = true;
+        }
     }
+
+
 }

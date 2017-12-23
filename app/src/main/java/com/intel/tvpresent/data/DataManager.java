@@ -35,7 +35,7 @@ public class DataManager {
     private final PreferencesHelper mPreferencesHelper;
     private final Room mRoom;
     private JMSHelper mJMSHelper;
-    private final String BASE_URL = "https://picky.top/";
+    private final String BASE_URL = "https://picky.top";
     private final Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
