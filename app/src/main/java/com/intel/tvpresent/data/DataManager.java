@@ -1,5 +1,7 @@
 package com.intel.tvpresent.data;
 
+import android.util.Log;
+
 import com.intel.tvpresent.data.local.PreferencesHelper;
 import com.intel.tvpresent.data.model.GameLevel;
 import com.intel.tvpresent.data.model.Room;
@@ -8,6 +10,7 @@ import com.intel.tvpresent.data.remote.AndroidTvService;
 import com.intel.tvpresent.data.remote.JMSHelper;
 import com.intel.tvpresent.data.remote.PickyHttpImpl;
 import com.squareup.okhttp.ResponseBody;
+import com.tencent.bugly.beta.Beta;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -77,7 +80,7 @@ public class DataManager {
             @Override
             public void call(final Subscriber<? super Room> subscriber) {
                 PickyHttpImpl pickyHttp = retrofit.create(PickyHttpImpl.class);
-                pickyHttp.login("010100a").enqueue(new Callback<ResponseBody>() {
+                pickyHttp.login(ConstantManager.TOKEN_SZ).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Response<ResponseBody> response, Retrofit retrofit) {
                         try {
@@ -92,7 +95,6 @@ public class DataManager {
 
                     @Override
                     public void onFailure(Throwable t) {
-                        System.out.println();
                         t.printStackTrace();
                     }
                 });
@@ -105,16 +107,18 @@ public class DataManager {
             @Override
             public void call(final Subscriber<? super Map<GameLevel, List<UserWrapper>>> subscriber) {
                 mJMSHelper.subscribe(new MqttCallback() {
-                    private int mLeftRetryTime = 100;
+                    private int mLeftRetryTime = 1000;
                     @Override
                     public void connectionLost(Throwable throwable) {
                         while (mLeftRetryTime-- > 0) {
+                            Log.i("AndroidTVBoilerPlate", String.format("Left retry time is %d", mLeftRetryTime));
                             mJMSHelper.subscribe(this); // reconnect
                         }
                     }
 
                     @Override
                     public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
+                        Beta.checkUpgrade(false,false);
                         if (mRoom.updateInPush(new String(mqttMessage.getPayload()))) {
                             subscriber.onNext(mRoom.getUserWrapperList());
                         }

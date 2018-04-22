@@ -45,19 +45,27 @@
 
         <com.daimajia.numberprogressbar.NumberProgressBar
             android:id="@+id/number_progress_bar"
+            android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/user_record_video"
-            app:layout_constraintLeft_toLeftOf="@+id/user_record_video"
+            app:layout_constraintBottom_toBottomOf="@+id/video_layout"
+            app:layout_constraintLeft_toLeftOf="@+id/video_layout"
             app:layout_constraintTop_toBottomOf="@+id/notice"
             app:layout_constraintVertical_bias="0.498" />
 
-        <org.videolan.vlc.VlcVideoView
-            android:id="@+id/user_record_video"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="400dp"
+            android:id="@+id/video_layout"
+            android:foregroundGravity="center"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" >
+            <VideoView
+                android:layout_gravity="center"
+                android:id="@+id/user_record_video"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+        </FrameLayout>
 
         <LinearLayout
             android:id="@+id/bottom_bar"
@@ -65,21 +73,24 @@
             android:layout_height="0dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_record_video">
+            app:layout_constraintTop_toBottomOf="@+id/video_layout"
+            android:weightSum="10">
 
             <TextView
                 android:id="@+id/rules"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/rules"
-                android:textSize="20sp"/>
+                android:textSize="12sp"
+                android:layout_weight="6"/>
 
             <TextView
+                android:layout_marginLeft="5dp"
                 android:id="@+id/broadcast"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/rules"
-                android:textSize="20sp"/>
+                android:textSize="12sp"
+                android:layout_weight="2"/>
         </LinearLayout>
 
 
@@ -94,6 +105,7 @@
             android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
             android:textColor="@color/black"
             android:textSize="24sp"
+            android:singleLine="true"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:alpha="0.5"/>

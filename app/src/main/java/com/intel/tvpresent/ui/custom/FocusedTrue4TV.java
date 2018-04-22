@@ -17,7 +17,7 @@ import android.util.AttributeSet;
 
 public class FocusedTrue4TV extends android.support.v7.widget.AppCompatTextView {
 
-    private boolean isMarqueeEnable = false;
+    private boolean isMarqueeEnable = true;
 
     public FocusedTrue4TV(Context context) {
         super(context);
@@ -41,10 +41,6 @@ public class FocusedTrue4TV extends android.support.v7.widget.AppCompatTextView 
             }
             onWindowFocusChanged(enable);
         }
-    }
-
-    public boolean isMarqueeEnable() {
-        return isMarqueeEnable;
     }
 
     @Override

@@ -14,13 +14,13 @@ import com.hanks.htextview.line.LineTextView;
 import com.intel.tvpresent.R;
 import com.intel.tvpresent.data.model.GameLevel;
 import com.intel.tvpresent.data.model.UserWrapper;
+import com.intel.tvpresent.ui.custom.FocusedTrue4TV;
 
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
-import fr.arnaudguyon.smartfontslib.FontTextView;
 
 /**
  * Created by henryalps on 2017/7/31.
@@ -119,13 +119,13 @@ public class ContentRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         TextView mOrder;
 
         @Bind(R.id.user_name)
-        TextView mName;
+        FocusedTrue4TV mName;
 
         @Bind(R.id.background)
         View mBackground;
 
         @Bind(R.id.score)
-        FontTextView mScore;
+        TextView mScore;
 
         public ViewHolder(View itemView) {
             super(itemView);

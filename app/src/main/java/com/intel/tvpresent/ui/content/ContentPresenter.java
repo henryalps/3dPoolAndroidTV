@@ -1,12 +1,13 @@
 package com.intel.tvpresent.ui.content;
 
+import android.media.MediaPlayer;
+
 import com.intel.tvpresent.data.DataManager;
 import com.intel.tvpresent.data.model.GameLevel;
 import com.intel.tvpresent.data.model.Room;
 import com.intel.tvpresent.data.model.UserWrapper;
 import com.intel.tvpresent.ui.base.BasePresenter;
-
-import org.videolan.vlc.listener.MediaListenerEvent;
+import com.tencent.bugly.beta.Beta;
 
 import java.util.List;
 import java.util.Map;
@@ -18,12 +19,11 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class ContentPresenter extends BasePresenter<ContentMvpView> implements MediaListenerEvent {
+public class ContentPresenter extends BasePresenter<ContentMvpView> implements MediaPlayer.OnCompletionListener{
 
     private Subscription mSubscription;
     private final DataManager mDataManager;
     private Map<GameLevel, List<UserWrapper>> userCache = null;
-    private boolean handlerMarker = false;
 
     @Inject
     public ContentPresenter(DataManager dataManager) {
@@ -62,10 +62,10 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> implements M
                         List<UserWrapper> userWrappers = entry.getValue();
                         getMvpView().init(userWrappers, gameLevel);
                         getMvpView().playNext(ContentPresenter.this);
-//                        getMvpView().playNext();
                         getMvpView().setNotification(room.getNotification());
                         getMvpView().setNotice(room.getNotice());
                         getMvpView().setGameStatement(room.getGameStatement());
+                        getMvpView().setBarcode(room.getQrcodeUrl());
                     }
                 }
             }
@@ -93,18 +93,8 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> implements M
     }
 
     @Override
-    public void eventBuffing(float buffing, boolean show) {
-        System.out.println();
-    }
-
-    @Override
-    public void eventPlayInit(boolean openClose) {
-        System.out.println();
-        handlerMarker=false;
-    }
-
-    @Override
-    public void eventStop(boolean isPlayError) {
+    public void onCompletion(MediaPlayer mediaPlayer) {
+        Beta.checkUpgrade(false,false);
         if (userCache != null && userCache.size() > 0) {
             Map.Entry<GameLevel, List<UserWrapper>> entry= userCache.entrySet().iterator().next();
             GameLevel gameLevel = entry.getKey();
@@ -114,21 +104,4 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> implements M
         }
         getMvpView().playNext(this);
     }
-
-    @Override
-    public void eventError(int error, boolean show) {
-
-    }
-
-    @Override
-    public void eventPlay(boolean isPlaying) {
-        if (handlerMarker) {
-            handlerMarker=false;
-            eventStop(false);
-        } else {
-            handlerMarker = true;
-        }
-    }
-
-
 }

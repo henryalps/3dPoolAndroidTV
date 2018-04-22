@@ -15,7 +15,7 @@
         android:background="@android:color/transparent"
         android:gravity="center"
         android:paddingRight="10dp"
-        android:text="第一关\n风云榜"
+        android:text="趣桌球公开赛\n第一关得分榜"
         android:textSize="24sp"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="8dp"

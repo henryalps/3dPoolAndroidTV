@@ -4,10 +4,11 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.intel.tvpresent.AndroidTvApplication;
+import com.intel.tvpresent.AndroidTvApplicationLike;
 import com.intel.tvpresent.injection.component.ActivityComponent;
 import com.intel.tvpresent.injection.component.DaggerActivityComponent;
 import com.intel.tvpresent.injection.module.ActivityModule;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 
 public class BaseActivity extends Activity {
 
@@ -33,7 +34,7 @@ public class BaseActivity extends Activity {
         if (mActivityComponent == null) {
             mActivityComponent = DaggerActivityComponent.builder()
                     .activityModule(new ActivityModule(this))
-                    .applicationComponent(AndroidTvApplication.get(this).getComponent())
+                    .applicationComponent(((AndroidTvApplicationLike)TinkerManager.getTinkerApplicationLike()).getComponent())
                     .build();
         }
         return mActivityComponent;

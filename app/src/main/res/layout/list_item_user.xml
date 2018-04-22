@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -40,7 +39,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/user_photo" />
 
-    <TextView
+    <com.intel.tvpresent.ui.custom.FocusedTrue4TV
         android:id="@+id/user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -49,23 +48,24 @@
         android:layout_marginTop="8dp"
         android:text="尊贵的会员"
         android:textSize="20sp"
-        android:maxLength="3"
+        android:maxLength="9"
         android:marqueeRepeatLimit="-1"
-        android:maxLines="3"
+        android:maxLines="1"
+        android:focusable="true"
+        android:singleLine="true"
         app:layout_constraintLeft_toRightOf="@+id/user_photo"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <fr.arnaudguyon.smartfontslib.FontTextView
+    <TextView
         android:id="@+id/score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="0dp"
         android:text="100"
-        android:textColor="@color/Orange"
-        android:textSize="28sp"
-        app:font="@string/fontScore"
-        app:layout_constraintLeft_toRightOf="@+id/user_name"
-        app:layout_constraintTop_toTopOf="@+id/user_name" />
+        android:textSize="40sp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/user_name"
+        android:layout_marginRight="5dp"/>
 
 </android.support.constraint.ConstraintLayout>

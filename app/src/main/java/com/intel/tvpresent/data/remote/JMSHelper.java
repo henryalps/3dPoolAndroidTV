@@ -2,6 +2,7 @@ package com.intel.tvpresent.data.remote;
 
 import android.content.Context;
 
+import com.intel.tvpresent.data.ConstantManager;
 import com.intel.tvpresent.injection.ApplicationContext;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
@@ -10,6 +11,7 @@ import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.net.InetAddress;
 import java.net.URL;
@@ -28,7 +30,7 @@ public class JMSHelper {
     private static String clientID = UUID.randomUUID().toString();
     private static final String host = "picky.top";
     private static final String port = "1883";
-    private static final String topic = "010100a.ranklist";
+    private static final String topic = ConstantManager.TOKEN + ".ranklist";
 
     private MqttConnectOptions conOpt;
     @Inject
@@ -48,7 +50,7 @@ public class JMSHelper {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        client = new MqttAndroidClient(context, uri, clientID);
+        client = new MqttAndroidClient(context, uri, clientID, new MemoryPersistence());
     }
 
     public void subscribe(final MqttCallback callback) {
@@ -61,12 +63,12 @@ public class JMSHelper {
                         client.subscribe(topic, 0, null, new IMqttActionListener() {
                             @Override
                             public void onSuccess(IMqttToken iMqttToken) {
-                                System.out.println();
+                                System.out.println("mqtt subscribe success");
                             }
 
                             @Override
                             public void onFailure(IMqttToken iMqttToken, Throwable throwable) {
-                                System.out.println();
+                                System.out.println("mqtt subscribe failed");
                             }
                         });
                     } catch (Exception ex) {
@@ -76,7 +78,7 @@ public class JMSHelper {
 
                 @Override
                 public void onFailure(IMqttToken iMqttToken, Throwable throwable) {
-                    System.out.println();
+                    System.out.println(throwable.getMessage());
                 }
             });
         } catch (MqttException e) {

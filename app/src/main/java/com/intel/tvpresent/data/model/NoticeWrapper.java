@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 
 public class NoticeWrapper {
     private JSONObject notice;
-    private String title = "AR桌球";
-    private String content = "欢迎您的加入，感谢您的关注！！！";
+    private String title = "";
+    private String content = "";
 
     public NoticeWrapper(JSONObject notice) {
         this.notice = notice;

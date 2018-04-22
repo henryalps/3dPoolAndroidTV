@@ -20,10 +20,12 @@ import javax.inject.Singleton;
 
 @Singleton
 public class Room {
+    private int MAX_USER_SIZE = 10;
     private String rawJson = " ";
     private String notification = " ";
     private String notice = " ";
     private String gameStatement = " ";
+    private String qrcodeUrl = "";
     private Map<GameLevel, List<UserWrapper>> userWrapperList;
 
     public String getRawJson() {
@@ -51,7 +53,7 @@ public class Room {
 
     private String jsonToStr(JSONObject jsonObject) {
         NoticeWrapper notice = new NoticeWrapper(jsonObject);
-        return String.format("【%s】\n\t %s", notice.getTitle(), notice.getContent());
+        return String.format("【%s】\n%s", notice.getTitle(), notice.getContent());
     }
 
     public boolean updateInLogin(String rawJson) {
@@ -61,10 +63,9 @@ public class Room {
             this.rawJson = jsonObject.getString("ranklist");
             this.notice =  jsonToStr(jsonObject.getJSONObject("notice"));
             this.gameStatement = jsonToStr(jsonObject.getJSONObject("gameStatement"));
-//            NoticeWrapper notice = new NoticeWrapper(jsonObject.getJSONObject("notification"));
-//            this.notification = String.format("【%s】%s", notice.getTitle(), notice.getContent());
-            this.notification = jsonToStr(jsonObject.getJSONObject("notification"));
+            this.qrcodeUrl = jsonObject.getString("deviceQRCode");
             setUserWrapperList(parseRawJson(this.rawJson));
+            this.notification = jsonObject.getString("notification");
             return true;
         } catch (Exception ex) {
             return false;
@@ -88,7 +89,7 @@ public class Room {
             for (int i=0; i<levelJson.size(); i++) {
                 GameLevel gameLevel = new GameLevel();
                 gameLevel.setId(levelJson.getJSONObject(i).getString("id"));
-                gameLevel.setName(levelJson.getJSONObject(i).getString("name") + "\n风云榜");
+                gameLevel.setName("趣桌球公开赛\n" + levelJson.getJSONObject(i).getString("name") + "得分榜");
                 gameLevel.setThumb(levelJson.getJSONObject(i).getString("thumbnailUrl"));
                 levels.add(gameLevel);
             }
@@ -109,6 +110,10 @@ public class Room {
                         return lhs.getRank() - rhs.getRank();
                     }
                 });
+
+                // limit user count in each room
+                int userCount = usersInRoomWithLevel.size() > MAX_USER_SIZE ? MAX_USER_SIZE : usersInRoomWithLevel.size();
+                userList = new ArrayList<>(userList.subList(0, userCount));
                 res.put(level, userList);
             }
         } catch (Exception ex) {
@@ -135,5 +140,13 @@ public class Room {
 
     public void setGameStatement(String gameStatement) {
         this.gameStatement = gameStatement;
+    }
+
+    public String getQrcodeUrl() {
+        return qrcodeUrl;
+    }
+
+    public void setQrcodeUrl(String qrcodeUrl) {
+        this.qrcodeUrl = qrcodeUrl;
     }
 }

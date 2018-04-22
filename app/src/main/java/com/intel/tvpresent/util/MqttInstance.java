@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.intel.tvpresent.callback.ConnectCallBackHandler;
 import com.intel.tvpresent.callback.MqttCallbackHandler;
+import com.intel.tvpresent.data.ConstantManager;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -20,7 +21,7 @@ public class MqttInstance {
     private static String clientID = UUID.randomUUID().toString();
     private static final String host = "picky.top";
     private static final String port = "1883";
-    private static final String topic = "010100a.ranklist";
+    private static final String topic = ConstantManager.TOKEN + ".ranklist";
 
     private static MqttInstance instance;
 
