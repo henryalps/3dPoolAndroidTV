@@ -6,36 +6,53 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:weightSum="16">
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="4">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/user_list"
+        android:orientation="vertical"
+        android:layout_weight="4"
+        android:id="@+id/left_view">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <include layout="@layout/list_header" android:id="@+id/real_header"/>
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="@+id/left_view"
+            app:layout_constraintBottom_toTopOf="@+id/left_bottom_view">
 
-        <RelativeLayout
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/user_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <include layout="@layout/list_header" android:id="@+id/real_header" android:visibility="invisible"/>
+        </LinearLayout>
+
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="105dp"
             android:background="@color/bg"
-            android:layout_alignParentBottom="true">
+            app:layout_constraintBottom_toBottomOf="@+id/left_view"
+            android:id="@+id/left_bottom_view"
+            android:layout_marginBottom="5dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/time_range"
+                android:textSize="15dp"
+                android:textColor="@color/LightGoldenrodYellow"
+                app:layout_constraintRight_toRightOf="@+id/left_bottom_view"
+                app:layout_constraintLeft_toLeftOf="@+id/left_bottom_view"/>
 
             <ImageView
                 android:id="@+id/barcode"
                 android:src="@drawable/barcode_2"
                 android:layout_height="80dp"
                 android:layout_width="80dp"
-                android:layout_centerHorizontal="true"/>
-        </RelativeLayout>
-    </RelativeLayout>
+                android:scaleType="fitXY"
+                app:layout_constraintRight_toRightOf="@+id/left_bottom_view"
+                app:layout_constraintLeft_toLeftOf="@+id/left_bottom_view"
+                app:layout_constraintTop_toBottomOf="@id/time_range"/>
+        </android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="0dp"
@@ -80,7 +97,6 @@
                 android:id="@+id/rules"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/rules"
                 android:textSize="12sp"
                 android:layout_weight="6"/>
 
@@ -90,7 +106,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
-                android:layout_weight="2"/>
+                android:layout_weight="4"/>
         </LinearLayout>
 
 
@@ -102,13 +118,13 @@
             android:focusable="true"
             android:marqueeRepeatLimit="-1"
             android:maxLines="1"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
             android:textColor="@color/black"
             android:textSize="24sp"
             android:singleLine="true"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:alpha="0.5"/>
+            android:alpha="0.5"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/score"
@@ -179,6 +195,18 @@
             android:visibility="invisible"
             app:layout_constraintLeft_toRightOf="@+id/lucky_ball"
             app:layout_constraintTop_toTopOf="@+id/score" />
+
+        <TextView
+            android:id="@+id/placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_record_center"
+            android:textSize="30dp"
+            app:layout_constraintRight_toRightOf="@+id/parent"
+            app:layout_constraintLeft_toLeftOf="@+id/parent"
+            app:layout_constraintTop_toTopOf="@+id/parent"
+            app:layout_constraintBottom_toBottomOf="@+id/parent"
+            android:textColor="@color/bg"/>
 
     </android.support.constraint.ConstraintLayout>
     </LinearLayout>

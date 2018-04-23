@@ -18,8 +18,8 @@ android {
         minSdkVersion 17
         targetSdkVersion 23
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        versionCode 10
-        versionName "1.0.9"
+        versionCode 12
+        versionName "3.0.0"
     }
     signingConfigs {
         release {
@@ -65,7 +65,7 @@ dependencies {
     final RUNNER_VERSION = '0.4'
     final RETROFIT_VERSION = '2.0.0-beta2'
     final FASTJSON_VERSION = '1.1.63.android'
-    final HTEXTVIEW_VERSION = "0.1.1"
+    final HTEXTVIEW_VERSION = "0.1.2"
 
     def daggerCompiler = "com.google.dagger:dagger-compiler:$DAGGER_VERSION"
     def jUnit = "junit:junit:4.12"

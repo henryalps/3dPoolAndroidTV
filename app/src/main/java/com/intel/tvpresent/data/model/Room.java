@@ -26,6 +26,7 @@ public class Room {
     private String notice = " ";
     private String gameStatement = " ";
     private String qrcodeUrl = "";
+    private ActivityWrapper activityWrapper;
     private Map<GameLevel, List<UserWrapper>> userWrapperList;
 
     public String getRawJson() {
@@ -41,7 +42,7 @@ public class Room {
         try {
             if (!getRawJson().equals(rawJson)) {
                 this.rawJson = rawJson;
-                setUserWrapperList(parseRawJson(rawJson));
+                updateInLogin(rawJson);
                 return true;
             }
             return false;
@@ -52,20 +53,26 @@ public class Room {
     }
 
     private String jsonToStr(JSONObject jsonObject) {
-        NoticeWrapper notice = new NoticeWrapper(jsonObject);
-        return String.format("【%s】\n%s", notice.getTitle(), notice.getContent());
+        if (null == jsonObject) {
+            return "";
+        } else {
+            NoticeWrapper notice = new NoticeWrapper(jsonObject);
+            return notice.getContent().isEmpty() ? "" : String.format("【%s】\n%s", notice.getTitle(), notice.getContent());
+        }
     }
 
     public boolean updateInLogin(String rawJson) {
         System.out.println(String.format("RAWJSON:LOGIN:%s", rawJson));
         try {
-            JSONObject jsonObject = JSON.parseObject(rawJson).getJSONObject("data");
-            this.rawJson = jsonObject.getString("ranklist");
+            this.rawJson = rawJson;
+            JSONObject jsonObject = JSON.parseObject(rawJson);
+            jsonObject = jsonObject.containsKey("data") ? jsonObject.getJSONObject("data") : jsonObject;
             this.notice =  jsonToStr(jsonObject.getJSONObject("notice"));
             this.gameStatement = jsonToStr(jsonObject.getJSONObject("gameStatement"));
             this.qrcodeUrl = jsonObject.getString("deviceQRCode");
-            setUserWrapperList(parseRawJson(this.rawJson));
-            this.notification = jsonObject.getString("notification");
+            setUserWrapperList(parseRawJson(jsonObject.getString("ranklist")));
+            this.activityWrapper = new ActivityWrapper(jsonObject.getJSONObject("activity"));
+            this.notification = jsonToStr(jsonObject.getJSONObject("notification"));
             return true;
         } catch (Exception ex) {
             return false;
@@ -96,7 +103,7 @@ public class Room {
 
             JSONObject usersInRoom = room.getJSONObject("ranklistMap");
             for (GameLevel level:levels) {
-                JSONArray usersInRoomWithLevel = usersInRoom.getJSONArray(level.getId());
+                JSONArray usersInRoomWithLevel = usersInRoom.containsKey(level.getId()) ? usersInRoom.getJSONArray(level.getId()) : new JSONArray();
                 ArrayList<UserWrapper> userList = new ArrayList<UserWrapper>();
 
                 for (int i=0; i<usersInRoomWithLevel.size(); i++) {
@@ -148,5 +155,9 @@ public class Room {
 
     public void setQrcodeUrl(String qrcodeUrl) {
         this.qrcodeUrl = qrcodeUrl;
+    }
+
+    public ActivityWrapper getActivityWrapper() {
+        return activityWrapper;
     }
 }

@@ -55,5 +55,7 @@
     <string translatable="false" name="fontScore">score-font.ttf</string>
     <string name="rules">【游戏规则】\n 1.游戏时间30秒。\n 2.每进一球得10分。\n 3.额外得分奖励 \n  \t①连续进球 \n  \t②母球停在对应位置 \n  \t③连号进球</string>
     <string name="broadcast">【公告】</string>
+    <string name="no_record_list">暂无记录</string>
+    <string name="no_record_center">暂无记录，期待你的挑战</string>
 
 </resources>

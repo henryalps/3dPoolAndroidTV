@@ -5,7 +5,9 @@ package com.intel.tvpresent.data;
  */
 
 public class ConstantManager {
-    public static String TOKEN_SZ = "0020010a";
-    public static String TOKEN_BJ = "";
+    public static Boolean IS_TEST = false;
+    private static String TOKEN_TEST = "0010010b";
+    private static String TOKEN_SZ = "0020010a";
+    private static String TOKEN_BJ = "0010010";
     public static String TOKEN = TOKEN_SZ;
 }

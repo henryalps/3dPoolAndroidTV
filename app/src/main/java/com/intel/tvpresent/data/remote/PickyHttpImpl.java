@@ -15,4 +15,7 @@ public interface PickyHttpImpl {
     @FormUrlEncoded
     @POST("arpoolcharge/monitor/login")
     Call<ResponseBody> login(@Field("serialNum") String serialNum);
+    @FormUrlEncoded
+    @POST("arpoolchargetest/monitor/login")
+    Call<ResponseBody> loginTest(@Field("serialNum") String serialNum);
 }

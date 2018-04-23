@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.hanks.htextview.line.LineTextView;
 import com.intel.tvpresent.R;
+import com.intel.tvpresent.data.model.ActivityWrapper;
 import com.intel.tvpresent.data.model.GameLevel;
 import com.intel.tvpresent.data.model.UserWrapper;
 import com.intel.tvpresent.ui.custom.FocusedTrue4TV;
@@ -29,15 +30,17 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ContentRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private GameLevel gameLevel;
     private UserWrapper[] userWrappers;
+    private ActivityWrapper activityWrapper;
     private Drawable mDefaultCardImage;
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
     private int mSelectdPos = 0;
 
-    public ContentRecycleViewAdapter(GameLevel gameLevel, List<UserWrapper> userWrappers) {
+    public ContentRecycleViewAdapter(GameLevel gameLevel, List<UserWrapper> userWrappers, ActivityWrapper activityWrapper) {
         UserWrapper[] converter = new UserWrapper[userWrappers.size()];
         this.userWrappers = userWrappers.toArray(converter);
         this.gameLevel = gameLevel;
+        this.activityWrapper = activityWrapper;
     }
 
     @Override
@@ -76,7 +79,7 @@ public class ContentRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             }
         } else {
             Header holder = (Header) viewHolder;
-            holder.title.animateText(gameLevel.getName());
+            holder.title.animateText(!activityWrapper.getName().isEmpty() ? activityWrapper.getName() : gameLevel.getName());
         }
     }
 

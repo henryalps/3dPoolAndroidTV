@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import retrofit.Call;
 import retrofit.Callback;
 import retrofit.GsonConverterFactory;
 import retrofit.Response;
@@ -80,7 +81,13 @@ public class DataManager {
             @Override
             public void call(final Subscriber<? super Room> subscriber) {
                 PickyHttpImpl pickyHttp = retrofit.create(PickyHttpImpl.class);
-                pickyHttp.login(ConstantManager.TOKEN_SZ).enqueue(new Callback<ResponseBody>() {
+                Call<ResponseBody> response;
+                if (ConstantManager.IS_TEST) {
+                    response = pickyHttp.loginTest(ConstantManager.TOKEN);
+                } else  {
+                    response = pickyHttp.login(ConstantManager.TOKEN);
+                }
+                response.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Response<ResponseBody> response, Retrofit retrofit) {
                         try {

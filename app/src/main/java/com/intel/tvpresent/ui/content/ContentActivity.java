@@ -1,7 +1,11 @@
 package com.intel.tvpresent.ui.content;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -9,17 +13,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
-import com.bumptech.glide.Glide;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.hanks.htextview.line.LineTextView;
 import com.intel.tvpresent.R;
+import com.intel.tvpresent.data.model.ActivityWrapper;
 import com.intel.tvpresent.data.model.GameLevel;
 import com.intel.tvpresent.data.model.PlayRecordWrapper;
 import com.intel.tvpresent.data.model.UserWrapper;
 import com.intel.tvpresent.ui.base.BaseActivity;
 import com.intel.tvpresent.ui.custom.FocusedTrue4TV;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -75,6 +82,12 @@ public class ContentActivity extends BaseActivity implements ContentMvpView {
     @Bind(R.id.barcode)
     ImageView mBarcode;
 
+    @Bind(R.id.time_range)
+    TextView mTimeRange;
+
+    @Bind(R.id.placeholder)
+    View mPlaceHolder;
+
     private ContentRecycleViewAdapter mAdapter;
 
 //    private CarouselLayoutManager layoutManager;
@@ -97,6 +110,7 @@ public class ContentActivity extends BaseActivity implements ContentMvpView {
         mRecyclerView.setLayoutManager(layoutManager); // new LinearLayoutManager(this)
         mContentPresenter.attachView(this);
         mBarcode.setVisibility(View.VISIBLE);
+        mBarcode.bringToFront();
         mBarcode.setImageResource(R.drawable.barcode_sz);
     }
 
@@ -112,13 +126,14 @@ public class ContentActivity extends BaseActivity implements ContentMvpView {
     }
 
     @Override
-    public void init(List<UserWrapper> userWrappers, GameLevel gameLevel) {
-        ((LineTextView)(headerView.findViewById(R.id.title))).setText(gameLevel.getName());
-        if (null == mAdapter) {
-            mAdapter = new ContentRecycleViewAdapter(gameLevel, userWrappers);
+    public void init(List<UserWrapper> userWrappers, GameLevel gameLevel, ActivityWrapper activityWrapper) {
+        ((LineTextView)(headerView.findViewById(R.id.title))).setText(!activityWrapper.getName().isEmpty()? activityWrapper.getName() : gameLevel.getName());
+        mTimeRange.setText(activityWrapper.getTimeRange());
+        if (null == mAdapter || 0 == mAdapter.getItemCount()) {
+            mAdapter = new ContentRecycleViewAdapter(gameLevel, userWrappers, activityWrapper);
         } else {
             int currentIndex = mAdapter.getmSelectdPos();
-            mAdapter = new ContentRecycleViewAdapter(gameLevel, userWrappers);
+            mAdapter = new ContentRecycleViewAdapter(gameLevel, userWrappers, activityWrapper);
             mAdapter.setmSelectdPos(currentIndex);
         }
         mRecyclerView.setAdapter(mAdapter);
@@ -131,6 +146,7 @@ public class ContentActivity extends BaseActivity implements ContentMvpView {
 
     @Override
     public void playNext(final MediaPlayer.OnCompletionListener onCompletionListener) {
+        mPlaceHolder.setVisibility(View.GONE);
         mVideoView.setMinimumHeight(mVideoView.getWidth() * 9 / 16);
         if (mVideoView.getVisibility() == View.VISIBLE) { // initialized
             mVideoView.pause();
@@ -262,8 +278,22 @@ public class ContentActivity extends BaseActivity implements ContentMvpView {
     }
 
     @Override
-    public void setBarcode(String url) {
-        Glide.with(this).load(url).into(mBarcode);
+    public void setBarcode(final String url) {
+//        Glide.with(this).load(url).into(mBarcode);
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                Bitmap bmp = getURLimage(url);
+                Message msg = new Message();
+                msg.what = 0;
+                msg.obj = bmp;
+                handle.sendMessage(msg);
+            }
+        }).start();
+        mBarcode.setVisibility(View.VISIBLE);
+        mBarcode.bringToFront();
     }
 
     @Override
@@ -272,5 +302,37 @@ public class ContentActivity extends BaseActivity implements ContentMvpView {
             return mVideoView.getDuration();
         }
         return 0L;
+    }
+
+
+    //在消息队列中实现对控件的更改
+    private Handler handle = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    Bitmap bmp=(Bitmap)msg.obj;
+                    mBarcode.setImageBitmap(bmp);
+                    break;
+            }
+        };
+    };
+
+    public Bitmap getURLimage(String url) {
+        Bitmap bmp = null;
+        try {
+            URL myurl = new URL(url);
+            // 获得连接
+            HttpURLConnection conn = (HttpURLConnection) myurl.openConnection();
+            conn.setConnectTimeout(6000);//设置超时
+            conn.setDoInput(true);
+            conn.setUseCaches(false);//不缓存
+            conn.connect();
+            InputStream is = conn.getInputStream();//获得图片的数据流
+            bmp = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bmp;
     }
 }

@@ -9,6 +9,7 @@ import com.intel.tvpresent.data.model.UserWrapper;
 import com.intel.tvpresent.ui.base.BasePresenter;
 import com.tencent.bugly.beta.Beta;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> implements M
     private Subscription mSubscription;
     private final DataManager mDataManager;
     private Map<GameLevel, List<UserWrapper>> userCache = null;
+    private Room mRoom = null;
 
     @Inject
     public ContentPresenter(DataManager dataManager) {
@@ -51,6 +53,12 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> implements M
 
             @Override
             public void onNext(Room room) {
+                mRoom = room;
+                getMvpView().init(new ArrayList<UserWrapper>(), new GameLevel(), room.getActivityWrapper());
+                getMvpView().setNotification(room.getNotification());
+                getMvpView().setNotice(room.getNotice());
+                getMvpView().setGameStatement(room.getGameStatement());
+                getMvpView().setBarcode(room.getQrcodeUrl());
                 for (Map.Entry<GameLevel, List<UserWrapper>> entry : room.getUserWrapperList().entrySet()) {
                     if (entry.getKey().getId().equals("1")) {
                         GameLevel gameLevel = entry.getKey();
@@ -60,12 +68,8 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> implements M
                             }
                         }
                         List<UserWrapper> userWrappers = entry.getValue();
-                        getMvpView().init(userWrappers, gameLevel);
+                        getMvpView().init(userWrappers, gameLevel, room.getActivityWrapper());
                         getMvpView().playNext(ContentPresenter.this);
-                        getMvpView().setNotification(room.getNotification());
-                        getMvpView().setNotice(room.getNotice());
-                        getMvpView().setGameStatement(room.getGameStatement());
-                        getMvpView().setBarcode(room.getQrcodeUrl());
                     }
                 }
             }
@@ -99,9 +103,10 @@ public class ContentPresenter extends BasePresenter<ContentMvpView> implements M
             Map.Entry<GameLevel, List<UserWrapper>> entry= userCache.entrySet().iterator().next();
             GameLevel gameLevel = entry.getKey();
             List<UserWrapper> userWrappers = entry.getValue();
-            getMvpView().init(userWrappers, gameLevel);
+            getMvpView().init(userWrappers, gameLevel, mRoom.getActivityWrapper());
             userCache = null;
         }
         getMvpView().playNext(this);
     }
+
 }
